@@ -9,38 +9,36 @@ use Moose::Exporter ();
 use Moose::Util::MetaRole;
 use MooseX::Documentation::Role::Object;
 use MooseX::Documentation::Class;
-use Moose::Util    ();
+use Moose::Util ();
 
 our $VERSION = '0.0100';
 
-Moose::Exporter->setup_import_methods( with_caller => ['document'],   );
-    
+Moose::Exporter->setup_import_methods( with_caller => ['document'], );
 
-sub init_meta {
+sub init_meta
+{
     shift;
     my %options = @_;
-    Moose->init_meta( %options ); 
+    Moose->init_meta(%options);
 
-    return Moose::Util::MetaRole::apply_metaclass_roles( 
-            for_class => $options{for_class},
-            metaclass_roles => ['MooseX::Documentation::Role::Object'],
+    return Moose::Util::MetaRole::apply_metaclass_roles(
+        for_class       => $options{for_class},
+        metaclass_roles => ['MooseX::Documentation::Role::Object'],
     );
-            
+
 }
-sub do_install { 
+
+sub check_install
+{
     my $package = shift;
-    my $meta = Class::MOP::Class->initialize( $package );
-#    if( !Moose::Util::does_role($meta, 'MooseX::Documentation::Role::Object' )){   
-#        Moose::Util::apply_all_roles( $meta, 'MooseX::Documentation::Role::Object' );
-#    }
-    $meta->meta->documentation();
-    return $meta;
+    my $meta    = Class::MOP::Class->initialize($package);
+    return $meta->documentation;
 }
 
 sub document
 {
     my ( $caller, $name, %options ) = @_;
-    do_install($caller)->documentation->add_method( {
+    check_install($caller)->add_method( {
             name    => $name,
             options => \%options
         }
