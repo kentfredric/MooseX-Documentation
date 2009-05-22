@@ -1,4 +1,4 @@
-package MooseX::Documentation::Role::Object;
+package MooseX::Documentation::Role::Class;
 
 # $Id:$
 use strict;

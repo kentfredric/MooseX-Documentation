@@ -7,7 +7,7 @@ use Moose           ();
 use Carp            ();
 use Moose::Exporter ();
 use Moose::Util::MetaRole;
-use MooseX::Documentation::Role::Object;
+use MooseX::Documentation::Role::Class;
 use MooseX::Documentation::Class;
 use Moose::Util ();
 
@@ -23,7 +23,7 @@ sub init_meta
 
     return Moose::Util::MetaRole::apply_metaclass_roles(
         for_class       => $options{for_class},
-        metaclass_roles => ['MooseX::Documentation::Role::Object'],
+        metaclass_roles => ['MooseX::Documentation::Role::Class'],
     );
 
 }
@@ -38,10 +38,9 @@ sub check_install
 sub document
 {
     my ( $caller, $name, %options ) = @_;
-    check_install($caller)->add_method( {
-            name    => $name,
-            options => \%options
-        }
+    check_install($caller)->add_method(
+        name    => $name,
+        options => \%options
     );
 }
 1;

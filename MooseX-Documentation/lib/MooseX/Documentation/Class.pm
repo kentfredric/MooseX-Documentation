@@ -4,13 +4,14 @@ package MooseX::Documentation::Class;
 use strict;
 use warnings;
 use Moose;
+use MooseX::Documentation::Method;
 
 our $VERSION = '0.0100';
 
 use namespace::clean -except => [qw( meta )];
 
 has methods => (
-    isa     => 'HashRef',
+    isa     => 'HashRef[ MooseX::Documentation::Method ]',
     is      => 'rw',
     default => sub { +{} },
 );
@@ -19,7 +20,6 @@ has for_package => (
     isa      => 'ClassName|RoleName',
     is       => 'ro',
     required => 1,
-    weak_ref => 1,
 );
 
 sub trim_whitespace
@@ -38,17 +38,14 @@ sub trim_whitespace
 sub add_method
 {
     my $self    = shift;
-    my $params  = shift;
-    my $name    = $params->{name};
-    my %options = %{ $params->{options} };
+    my %params  = @_;
+    my $name    = $params{name};
+    my %options = %{ $params{options} };
 
-    $self->methods->{$name} = {} unless exists $self->methods->{$name};
-    my $p = $self->methods->{$name};
-    for ( keys %options )
-    {
-        $p->{$_} = $self->trim_whitespace( $options{$_} )
-          unless exists $p->{$_};
-    }
+    my $method = MooseX::Documentation::Method->new( name => $name, brief => $self->trim_whitespace( $options{brief} ) );
+    delete $options{brief};
+    $method->unspecified( \%options );
+    $self->methods->{ $name } = $method;
     return $self;
 }
 
