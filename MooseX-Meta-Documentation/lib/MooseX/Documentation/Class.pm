@@ -1,4 +1,4 @@
-package MooseX::Meta::Documentation::Meta::Model;
+package MooseX::Documentation::Class;
 
 # $Id:$
 use strict;
