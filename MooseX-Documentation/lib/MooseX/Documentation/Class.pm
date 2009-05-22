@@ -48,6 +48,11 @@ sub add_method
     $self->methods->{ $name } = $method;
     return $self;
 }
+sub method 
+{
+    my $self = shift;
+    return map { $self->methods->{$_} } @_;
+}
 
 sub as_pod
 {
