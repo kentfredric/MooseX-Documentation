@@ -5,15 +5,23 @@ use strict;
 use warnings;
 use Moose;
 use MooseX::Documentation::Method;
+use MooseX::AttributeHelpers;
 
 our $VERSION = '0.0100';
 
 use namespace::clean -except => [qw( meta )];
 
 has methods => (
-    isa     => 'HashRef[ MooseX::Documentation::Method ]',
-    is      => 'rw',
-    default => sub { +{} },
+    metaclass => 'Collection::Hash',
+    isa       => 'HashRef[ MooseX::Documentation::Method ]',
+    is        => 'rw',
+    default   => sub { +{} },
+    provides  => {
+        'set'    => '_set_method',
+        'get'    => 'method',
+        'exists' => 'has_method',
+        'keys'   => 'method_names',
+    },
 );
 
 has for_package => (
@@ -22,19 +30,6 @@ has for_package => (
     required => 1,
 );
 
-sub trim_whitespace
-{
-    my $self   = shift;
-    my $string = shift;
-    $string =~ s/^\s*//gm;
-    $string =~ s/\s*$//gm;
-    if ( $string =~ /\n/ )
-    {
-        return [ split /\n/, $string ];
-    }
-    return $string;
-}
-
 sub add_method
 {
     my $self    = shift;
@@ -42,56 +37,25 @@ sub add_method
     my $name    = $params{name};
     my %options = %{ $params{options} };
 
-    my $method = MooseX::Documentation::Method->new(
-        name  => $name,
-        brief => $self->trim_whitespace( $options{brief} )
+    $self->_set_method(
+        $name,
+        MooseX::Documentation::Method->new(
+            name  => $name,
+            brief => $options{brief},
+        )
     );
     delete $options{brief};
-    $method->unspecified( \%options );
-    $self->methods->{$name} = $method;
+    $self->method($name)->set_misc( %options );
     return $self;
-}
-
-sub method
-{
-    my $self = shift;
-    return map { $self->methods->{$_} } @_;
 }
 
 sub to_pod
 {
     my $self = shift;
-    return $self->_pod_h1('methods');
-}
-
-sub _pod_h1
-{
-    my $self  = shift;
-    my $title = shift;
-    return sprintf qq{\n=head1 %s\n\n%s}, uc($title), join '',
+    return sprintf qq{\n=head1 METHODS\n\n%s}, join '',
       map { $_->to_pod } values %{ $self->methods };
 }
 
-sub _pod_h2
-{
-    my $self     = shift;
-    my $title    = shift;
-    my $subtitle = shift;
-    return sprintf qq{\n=head2 ->%s\n\n%s\n\n=over 4\n\n%s\n=back\n}, $subtitle,
-      $self->_text( $title, $subtitle, 'brief' ), join '',
-      map { $self->_pod_item( $title, $subtitle, $_ ) }
-      grep { $_ ne 'brief' } keys %{ $self->{$title}->{$subtitle} };
-}
-
-sub _pod_item
-{
-    my $self     = shift;
-    my $title    = shift;
-    my $subtitle = shift;
-    my $field    = shift;
-    return sprintf qq{\n=item * %s\n\n%s\n}, $field,
-      $self->_text( $title, $subtitle, $field );
-}
 
 __PACKAGE__->meta->make_immutable;
 1;
