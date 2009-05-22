@@ -48,6 +48,6 @@ TODO:
 {
     local $TODO = "Need to replace the boilerplate text";
 
-    module_boilerplate_ok('lib/MooseX/Meta/Documentation.pm');
+    module_boilerplate_ok('lib/MooseX/Documentation.pm');
 }
 
