@@ -1,19 +1,19 @@
-package MooseX::Documentation::Class;
+package MooseX::Documentation::DocStrings::Class;
 
 # $Id:$
 use strict;
 use warnings;
 use Moose;
-use MooseX::Documentation::Method;
+use MooseX::Documentation::DocStrings::Method;
 use MooseX::AttributeHelpers;
 
 our $VERSION = '0.0100';
 
-use namespace::clean -except => [qw( meta )];
+use namespace::autoclean;
 
 has methods => (
     metaclass => 'Collection::Hash',
-    isa       => 'HashRef[ MooseX::Documentation::Method ]',
+    isa       => 'HashRef[ Method ]',
     is        => 'rw',
     default   => sub { +{} },
     provides  => {
@@ -39,7 +39,7 @@ sub add_method
 
     $self->_set_method(
         $name,
-        MooseX::Documentation::Method->new(
+        MooseX::Documentation:DocStrings::Method->new(
             name  => $name,
             brief => $options{brief},
         )
@@ -49,14 +49,15 @@ sub add_method
     return $self;
 }
 
-sub to_pod
-{
-    my $self = shift;
-    return sprintf qq{\n=head1 METHODS\n\n%s}, join '',
-      map { $_->to_pod } values %{ $self->methods };
-}
-
 
 __PACKAGE__->meta->make_immutable;
 1;
+__END__
+
+=head1 NAME
+
+MooseX::Documentation::Class - Data Storage record for Documentation about a given Class.
+
+=
+
 
