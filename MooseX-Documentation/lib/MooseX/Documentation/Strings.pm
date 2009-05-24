@@ -7,7 +7,7 @@ use Moose;
 use MooseX::Documentation::Strings::Method;
 use MooseX::AttributeHelpers;
 
-our $VERSION='0.0100';
+our $VERSION = '0.0100';
 
 use namespace::autoclean;
 
@@ -25,34 +25,21 @@ has methods => (
 );
 
 has 'package' => (
-    isa => 'ClassName | RoleName',
+    isa      => 'ClassName | RoleName',
     required => 1,
-    is => 'ro' 
+    is       => 'ro'
 );
-
 
 sub add_method
 {
-    my $self    = shift;
-    my %params  = @_;
-    my $name    = $params{name};
-    my %options = %{ $params{options} };
-
+    my $self   = shift;
+    my %params = @_;
     $self->_set_method(
-        $name,
-        MooseX::Documentation::Strings::Method->new(
-            name  => $name,
-            brief => $options{brief},
-            'package' => $self->package ,
-        )
+        $params{name} || undef,
+        MooseX::Documentation::Strings::Method->new(%params),
     );
-    delete $options{brief};
-    if ( keys %options  ){
-        $self->method($name)->set_misc( %options );
-    }
     return $self;
 }
-
 
 1;
 

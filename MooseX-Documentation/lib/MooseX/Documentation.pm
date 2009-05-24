@@ -3,17 +3,17 @@ package MooseX::Documentation;
 # $Id:$
 use strict;
 use warnings;
-use Moose                                 ();
-use Carp                                  ();
-use Moose::Exporter                       ();
-use Moose::Util::MetaRole                 ();
-use MooseX::Documentation::Role::Class    ();
-use MooseX::Documentation::Strings::Class ();
-use Moose::Util                           ();
+use Moose                              ();
+use Carp                               ();
+use Moose::Exporter                    ();
+use Moose::Util::MetaRole              ();
+use MooseX::Documentation::Role::Class ();
+use MooseX::Documentation::Strings     ();
+use Moose::Util                        ();
 
 our $VERSION = '0.0100';
 
-Moose::Exporter->setup_import_methods( with_caller => ['document'], );
+Moose::Exporter->setup_import_methods( as_is => ['document'], );
 
 #
 # init_meta bolts in meta->documentation ( MooseX::Documention::Package )
@@ -41,10 +41,14 @@ sub check_install
 # TODO Use ourself to document ourself. This might be a joke.
 sub document
 {
-    my ( $caller, $name, %options ) = @_;
-    check_install($caller)->strings->add_method(
+    my ( $name, %options ) = @_;
+    my ( $package, $filename, $line ) = caller;
+    check_install($package)->strings->add_method(
         name    => $name,
-        options => \%options
+        source_package => $package,
+        source_file => $filename,
+        source_line => $line,
+        %options,
     );
 }
 1;
