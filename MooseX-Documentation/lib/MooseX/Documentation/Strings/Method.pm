@@ -31,24 +31,27 @@ has name => (
 );
 
 has source_package => (
-    isa      => 'Str',
-    required => 1,
+    isa      => 'Str | Undef',
+#    required => 1,
     is       => 'ro',
     writer   => '_set_source_package',
+    default  => sub { undef },
 );
 
 has source_file => (
-    isa      => 'Str',
+    isa      => 'Str | Undef',
     required => 1,
     is       => 'ro',
     writer   => '_set_source_file',
+    default  => sub { undef },
 );
 
 has source_line => (
-    isa      => 'Str',
+    isa      => 'Str | Undef',
     required => 1,
     is       => 'ro',
     writer   => '_set_source_line',
+    default => sub { undef },
 );
 
 has brief => (

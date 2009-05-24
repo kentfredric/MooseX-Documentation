@@ -5,7 +5,10 @@
   document method => (
       brief => qq{  hello world },
   );
-  __PACKAGE__->meta->documentation->strings->add( foo , brief => qq{ hello world });
+  __PACKAGE__->meta->documentation->strings->addmethod( 
+      name => foo , 
+      brief => qq{ hello world },
+  );
 
 =head1 Extracting Documentation
 
