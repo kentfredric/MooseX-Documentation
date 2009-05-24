@@ -3,18 +3,21 @@ package MooseX::Documentation;
 # $Id:$
 use strict;
 use warnings;
-use Moose                              ();
-use Carp                               ();
-use Moose::Exporter                    ();
-use Moose::Util::MetaRole              ();
-use MooseX::Documentation::Role::Class ();
-use MooseX::Documentation::Class       ();
-use Moose::Util                        ();
+use Moose                                 ();
+use Carp                                  ();
+use Moose::Exporter                       ();
+use Moose::Util::MetaRole                 ();
+use MooseX::Documentation::Role::Class    ();
+use MooseX::Documentation::Strings::Class ();
+use Moose::Util                           ();
 
 our $VERSION = '0.0100';
 
 Moose::Exporter->setup_import_methods( with_caller => ['document'], );
 
+#
+# init_meta bolts in meta->documentation ( MooseX::Documention::Package )
+#
 sub init_meta
 {
     shift;
@@ -39,7 +42,7 @@ sub check_install
 sub document
 {
     my ( $caller, $name, %options ) = @_;
-    check_install($caller)->add_method(
+    check_install($caller)->strings->add_method(
         name    => $name,
         options => \%options
     );

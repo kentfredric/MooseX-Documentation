@@ -1,4 +1,4 @@
-package MooseX::Documentation::Method;
+package MooseX::Documentation::Strings::Method;
 
 # $Id:$
 use strict;
@@ -95,48 +95,6 @@ sub _trim_whitespace
         return [ split /\n/, $string ];
     }
     return $string;
-}
-
-sub to_pod
-{
-    my $self = shift;
-
-    my $t = qq{\n=head2 %s\n\n%s\n\n=over 4\n\n%s\n=back\n};
-
-    my $it    = qq{\n=item * %s\n\n%s\n};
-    my $extra = '';
-    for ( sort $self->misc_items )
-    {
-        $extra .= sprintf $it, $_, $self->_text( $_, $self->get_misc($_) );
-    }
-
-    return
-      sprintf( $t, $self->name, $self->_text( 'brief', $self->brief ), $extra );
-
-}
-
-sub _text
-{
-    my $self = shift;
-    my $type = shift;
-    my $data = shift;
-
-    my $out    = '';
-    my $prefix = '';
-
-    if ( $type =~ m/^example/ )
-    {
-        $prefix = q{ } x 4;
-    }
-    if ( not ref $data )
-    {
-        $out .= $prefix . $data;
-    }
-    if ( ref $data eq 'ARRAY' )
-    {
-        $out .= $prefix . $_ . "\n" for @{$data};
-    }
-    return $out;
 }
 
 1;

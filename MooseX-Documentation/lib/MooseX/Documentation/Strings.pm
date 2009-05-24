@@ -1,19 +1,19 @@
-package MooseX::Documentation::DocStrings::Class;
+package MooseX::Documentation::Strings;
 
 # $Id:$
 use strict;
 use warnings;
 use Moose;
-use MooseX::Documentation::DocStrings::Method;
+use MooseX::Documentation::Strings::Method;
 use MooseX::AttributeHelpers;
 
-our $VERSION = '0.0100';
+our $VERSION='0.0100';
 
 use namespace::autoclean;
 
 has methods => (
     metaclass => 'Collection::Hash',
-    isa       => 'HashRef[ Method ]',
+    isa       => 'HashRef[MooseX::Documentation::Strings::Method]',
     is        => 'rw',
     default   => sub { +{} },
     provides  => {
@@ -24,11 +24,12 @@ has methods => (
     },
 );
 
-has for_package => (
-    isa      => 'ClassName|RoleName',
-    is       => 'ro',
+has 'package' => (
+    isa => 'ClassName | RoleName',
     required => 1,
+    is => 'ro' 
 );
+
 
 sub add_method
 {
@@ -39,25 +40,19 @@ sub add_method
 
     $self->_set_method(
         $name,
-        MooseX::Documentation:DocStrings::Method->new(
+        MooseX::Documentation::Strings::Method->new(
             name  => $name,
             brief => $options{brief},
+            'package' => $self->package ,
         )
     );
     delete $options{brief};
-    $self->method($name)->set_misc( %options );
+    if ( keys %options  ){
+        $self->method($name)->set_misc( %options );
+    }
     return $self;
 }
 
 
-__PACKAGE__->meta->make_immutable;
 1;
-__END__
-
-=head1 NAME
-
-MooseX::Documentation::Class - Data Storage record for Documentation about a given Class.
-
-=
-
 
