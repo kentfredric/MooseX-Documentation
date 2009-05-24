@@ -1,0 +1,39 @@
+=head1 Attaching Documentation to a Given package.
+
+
+  use MooseX::Documentation;
+  document method => (
+      brief => qq{  hello world },
+  );
+
+=head1 Extracting Documentation
+
+  $docs = __PACKAGE__->meta->documentation;
+
+  $docs->format() # BasicPOD 
+  $docs->format('Formatter') # With MX::D::Formatter::Formatter 
+
+  $docs->method('foo')->format()
+  $docs->method('foo')->format('Formatter');
+
+=head1 Raw Doc Strings
+
+  $docs->strings() # User Specified Data
+  $docs->strings->method('foo') # strings for method 'foo' 
+
+=head1 Introspection 
+
+  $docs->attributes()
+  $docs->attribute('foo');
+  $docs->method('foo')->signature
+  $docs->method('foo')->deparsed
+
+=head1 Extending Introspection. 
+
+  $docs->extend(qw( Module::Foo Module::Bar ))
+  $docs->attribute('foo')->somethingFromBar();
+  $docs->method('baz')->somethingFromBar();
+  $docs->somethingFromFoo();
+
+
+
