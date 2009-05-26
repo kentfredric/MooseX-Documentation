@@ -53,9 +53,9 @@ Moose::Exporter->setup_import_methods(
 
 sub assert_require {
     my $package = shift;
-    return if $package->isa('UNIVERSAL');
+    return 1 if ( $package->isa('UNIVERSAL') && $package->can('new') );
     if ( eval "require $package; 1" ) {
-        return 1 if $package->isa('UNIVERSAL');
+        return 1 if ( $package->isa('UNIVERSAL') && $package->can('new') );
     }
     MooseX::Documentation::Exception::Require->throw(
         error       => "Could Not Require Package",

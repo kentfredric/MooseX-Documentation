@@ -13,7 +13,7 @@ use namespace::autoclean;
 
 with(
 
-   #    'MooseX::Documentation::Role::Formattable' => { 'subclass' => 'class' },
+    'MooseX::Documentation::Role::Formattable' => { 'subclass' => q{} },
     'MooseX::Object::Pluggable',
 );
 

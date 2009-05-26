@@ -13,5 +13,7 @@ pass("Using it works");
 use Data::Dumper;
 print Dumper( ExampleClass->meta->documentation );
 
+print ExampleClass->meta->documentation->format();
+
 
 

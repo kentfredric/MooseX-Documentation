@@ -4,7 +4,12 @@ package MooseX::Documentation::Role::Formattable;
 use strict;
 use warnings;
 use MooseX::Role::Parameterized;
-use MooseX::Documentation::Exceptions;
+#use MooseX::Documentation::Role::Formatter;
+use MooseX::Documentation::Formatter::BasicPod;
+#use MooseX::Documentation::Role::Formatter::Class;
+#use MooseX::Documentation::Formatter::BasicPod::Class;
+#use MooseX::Documentation::Role::Formatter::Methods;
+#use MooseX::Documentation::Formatter::BasicPod::Methods;
 
 our $VERSION = '0.0100';
 
@@ -18,18 +23,25 @@ parameter subclass => (
 role {
     my $p        = shift;
     my $subclass = $p->subclass;
+    $subclass = "::${subclass}" unless $subclass eq q{};
 
     has '_formatter' => (
-        isa        => "MooseX::Documentation::Role::Formatter::${subclass}",
+        isa        => "MooseX::Documentation::Role::Formatter${subclass}",
         is         => 'ro',
         lazy_build => 1,
+    );
+
+    has '_formatter_class' => (
+        isa     => 'Str',
+        is      => 'rw',
+        default => "MooseX::Documentation::Formatter::BasicPod${subclass}",
     );
 
     requires '_args';
 
     method '_build__formatter' => sub {
-        "MooseX::Documentation::Formatter::BasicPod::${subclass}"
-          ->new( shift->_args );
+        my $self = shift;
+        $self->_formatter_class->new( $self->_args );
     };
 
     method 'format' => sub {
@@ -39,15 +51,13 @@ role {
             $formatter->format( $self->_args, @extra );
         }
         elsif ( defined $formatter ) {
-            $formatter = 'MooseX::Documentation::Formatter::' . $formatter;  
-            assert_require($formatter);
 
-            # redundant, I know.
-            $formatter->new( $self->_args, @extra )
-              ->format( $self->args, @extra );
+            # its your fault if this fails
+            "MooseX::Documentation::Formatter::${formatter}"
+              ->new( $self->_args, @extra )->format( $self->_args, @extra );
         }
         else {
-            $self->formatter->format( $self->args );
+            $self->_formatter->format( $self->_args );
         }
     };
 };
