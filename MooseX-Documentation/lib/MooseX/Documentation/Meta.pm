@@ -11,11 +11,7 @@ our $VERSION = '0.0100';
 
 use namespace::autoclean;
 
-with(
-
-    'MooseX::Documentation::Role::Formattable' => { 'subclass' => q{} },
-    'MooseX::Object::Pluggable',
-);
+with( 'MooseX::Object::Pluggable', );
 
 has 'strings' => (
     isa        => 'MooseX::Documentation::Strings',
