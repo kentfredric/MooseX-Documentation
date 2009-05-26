@@ -23,26 +23,24 @@ has 'package_meta' => (
 
 has 'methods_formatter_class' => (
     isa => 'ClassName',
-    is => 'rw',
+    is  => 'rw',
 );
 
 has 'methods_formatter' => (
-    isa => 'MooseX::Documentation::Role::Formatter::Methods',
-    is => 'ro',
+    isa        => 'MooseX::Documentation::Role::Formatter::Methods',
+    is         => 'ro',
     lazy_build => 1,
 );
-
 
 requires qw( to_string );
 
 sub _build_methods_formatter {
     my $self = shift;
-    return $self->methods_formatter_class->new( 
-        docstrings => $self->docstrings, 
+    return $self->methods_formatter_class->new(
+        docstrings   => $self->docstrings,
         package_meta => $self->package_meta,
     );
 }
-
 
 1;
 

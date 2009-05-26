@@ -11,16 +11,15 @@ our $VERSION = '0.0100';
 use namespace::autoclean;
 
 class_has 'Recognised_Field_List' => (
-    isa => 'HashRef[Str]',
+    isa       => 'HashRef[Str]',
     metaclass => 'Collection::Hash',
-    is  => 'ro',
-    default => sub {
-       my %x = map { $_ => 1 } qw( name source_package source_file source_line brief );
-       return \%x;
+    is        => 'ro',
+    default   => sub {
+        my %x = map { $_ => 1 }
+          qw( name source_package source_file source_line brief );
+        return \%x;
     },
-    provides => {
-        'exists' => 'Recognises_Field',
-    }
+    provides => { 'exists' => 'Recognises_Field', }
 );
 
 has name => (
@@ -31,11 +30,12 @@ has name => (
 );
 
 has source_package => (
-    isa      => 'Str | Undef',
-#    required => 1,
-    is       => 'ro',
-    writer   => '_set_source_package',
-    default  => sub { undef },
+    isa => 'Str | Undef',
+
+    #    required => 1,
+    is      => 'ro',
+    writer  => '_set_source_package',
+    default => sub { undef },
 );
 
 has source_file => (
@@ -51,7 +51,7 @@ has source_line => (
     required => 1,
     is       => 'ro',
     writer   => '_set_source_line',
-    default => sub { undef },
+    default  => sub { undef },
 );
 
 has brief => (
@@ -80,11 +80,11 @@ has miscelaneous => (
 
 sub BUILDARGS {
     my $class = shift;
-    my %misc = ();
+    my %misc  = ();
     my %args;
-    if( eval { %args = @_; 1 } ){
-        for( keys %args ){
-            if( ! $class->Recognises_Field($_) ){
+    if ( eval { %args = @_; 1 } ) {
+        for ( keys %args ) {
+            if ( !$class->Recognises_Field($_) ) {
                 $misc{$_} = $args{$_};
                 delete $args{$_};
             }
@@ -94,8 +94,7 @@ sub BUILDARGS {
     return $class->SUPER::BUILDARGS(%args);
 }
 
-sub BUILD
-{
+sub BUILD {
     my $self = shift;
     $self->_set_name( $self->name );
     $self->_set_brief( $self->brief );
@@ -118,8 +117,7 @@ for (
 
 around 'set_misc' => sub {
     my ( $orig, $self, %flags ) = @_;
-    for ( keys %flags )
-    {
+    for ( keys %flags ) {
         $flags{$_} = $self->_trim_whitespace( $flags{$_} );
     }
     return $self->$orig(%flags);
@@ -127,22 +125,19 @@ around 'set_misc' => sub {
 
 around 'set_miscelaneous' => sub {
     my ( $orig, $self, $value ) = @_;
-    for ( keys %{$value} )
-    {
+    for ( keys %{$value} ) {
         $value->{$_} = $self->_trim_whitespace( $value->{$_} );
     }
     return $self->$orig($value);
 };
 
-sub _trim_whitespace
-{
+sub _trim_whitespace {
     my $self   = shift;
     my $string = shift;
     return $string if ( ref $string );
     $string =~ s/^\s*//gm;
     $string =~ s/\s*$//gm;
-    if ( $string =~ /\n/ )
-    {
+    if ( $string =~ /\n/ ) {
         return [ split /\n/, $string ];
     }
     return $string;

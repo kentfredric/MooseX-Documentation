@@ -4,6 +4,8 @@ package MooseX::Documentation::Role::Formattable;
 use strict;
 use warnings;
 use MooseX::Role::Parameterized;
+use MooseX::Documentation::Exceptions;
+
 our $VERSION = '0.0100';
 
 use namespace::autoclean;
@@ -13,8 +15,7 @@ parameter subclass => (
     required => 1,
 );
 
-role
-{
+role {
     my $p        = shift;
     my $subclass = $p->subclass;
 
@@ -34,23 +35,18 @@ role
     method 'format' => sub {
         my ( $self, $formatter, @extra ) = @_;
 
-        if ( ref $formatter )
-        {
+        if ( ref $formatter ) {
             $formatter->format( $self->_args, @extra );
         }
-        elsif ( defined $formatter )
-        {
-            $formatter =~ s{  ^  (MooseX::Documentation::Formatter::)?  
-                                }{MooseX::Documentation::Formatter::}x;
-            eval "require $formatter; 1"
-              or Carp::croak("Error Loading formatter $formatter, $@ $!");
+        elsif ( defined $formatter ) {
+            $formatter = 'MooseX::Documentation::Formatter::' . $formatter;  
+            assert_require($formatter);
 
             # redundant, I know.
             $formatter->new( $self->_args, @extra )
               ->format( $self->args, @extra );
         }
-        else
-        {
+        else {
             $self->formatter->format( $self->args );
         }
     };

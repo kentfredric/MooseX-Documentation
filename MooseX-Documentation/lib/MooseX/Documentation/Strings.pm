@@ -30,8 +30,7 @@ has 'package' => (
     is       => 'ro'
 );
 
-sub add_method
-{
+sub add_method {
     my $self   = shift;
     my %params = @_;
     $self->_set_method(

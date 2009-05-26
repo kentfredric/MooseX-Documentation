@@ -11,22 +11,19 @@ use namespace::clean -except => [qw( meta )];
 
 with 'MooseX::Documentation::Role::Formatter::Class';
 
-has '+methods_formatter_class' => (
-        default => 'MooseX::Documentation::Formatter::BasicPod::Methods',
-);
+has '+methods_formatter_class' =>
+  ( default => 'MooseX::Documentation::Formatter::BasicPod::Methods', );
 
 has 'pod_template' => (
-        isa => 'Str',
-        is => 'ro',
-        default => qq{\n=head1 METHODS\n\n%s},
+    isa     => 'Str',
+    is      => 'ro',
+    default => qq{\n=head1 METHODS\n\n%s},
 );
 
-sub to_string 
-{
+sub to_string {
     my $self = shift;
     return sprintf $self->pod_template, $self->methods_formatter->to_string;
 }
-
 
 __PACKAGE__->meta->make_immutable;
 

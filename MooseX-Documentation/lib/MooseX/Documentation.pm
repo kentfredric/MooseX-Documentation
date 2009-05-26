@@ -3,13 +3,16 @@ package MooseX::Documentation;
 # $Id:$
 use strict;
 use warnings;
-use Moose                              ();
-use Carp                               ();
-use Moose::Exporter                    ();
-use Moose::Util::MetaRole              ();
-use MooseX::Documentation::Role::Class ();
-use MooseX::Documentation::Strings     ();
-use Moose::Util                        ();
+use Moose ();
+
+#use Carp                               ();
+use Moose::Exporter       ();
+use Moose::Util::MetaRole ();
+
+#use MooseX::Documentation::Role::Class ();
+#use MooseX::Documentation::Strings     ();
+#use Moose::Util                        ();
+use namespace::autoclean;
 
 our $VERSION = '0.0100';
 
@@ -18,8 +21,7 @@ Moose::Exporter->setup_import_methods( as_is => ['document'], );
 #
 # init_meta bolts in meta->documentation ( MooseX::Documention::Package )
 #
-sub init_meta
-{
+sub init_meta {
     shift;
     my %options = @_;
     Moose->init_meta(%options);
@@ -31,23 +33,22 @@ sub init_meta
 
 }
 
-sub check_install
-{
+sub _check_install {
     my $package = shift;
-    my $meta    = Class::MOP::Class->initialize($package);
+    my $meta    = Class::MOP::class_of($package)
+      || Class::MOP::Class->initialize($package);
     return $meta->documentation;
 }
 
 # TODO Use ourself to document ourself. This might be a joke.
-sub document
-{
+sub document {
     my ( $name, %options ) = @_;
     my ( $package, $filename, $line ) = caller;
-    check_install($package)->strings->add_method(
-        name    => $name,
+    _check_install($package)->strings->add_method(
+        name           => $name,
         source_package => $package,
-        source_file => $filename,
-        source_line => $line,
+        source_file    => $filename,
+        source_line    => $line,
         %options,
     );
 }
